@@ -26,14 +26,14 @@ public class Robot extends TimedRobot {
   private final MotorController m_rightMotor = new WPI_TalonSRX(7);
 
       // Constants such as camera and target height stored. Change per robot and goal!
-      final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(24);
-      final double TARGET_HEIGHT_METERS = Units.feetToMeters(5);
+      final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(23);
+      final double TARGET_HEIGHT_METERS = Units.inchesToMeters(21.5);
   
       // Angle between horizontal and the camera.
       final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(0);
   
       // How far from the target we want to be
-      final double GOAL_RANGE_METERS = Units.feetToMeters(3);
+      final double GOAL_RANGE_METERS = Units.feetToMeters(2);
   
       // Change this to match the name of your camera
       PhotonCamera camera = new PhotonCamera("photonvision");
@@ -47,22 +47,73 @@ public class Robot extends TimedRobot {
       final double ANGULAR_D = 0.0;
       PIDController turnController = new PIDController(ANGULAR_P, 0, ANGULAR_D);
   
-
+//tommy innit
   @Override
   public void robotInit() {
-    // We need to invert one side of the drivetrain so that positive voltages
-    // result in both sides moving forward. Depending on how your robot's
-    // gearbox is constructed, you might have to invert the left side instead.
+
     m_rightMotor.setInverted(true);
 
     m_myRobot = new DifferentialDrive(m_leftMotor, m_rightMotor);
     m_leftStick = new Joystick(0);
   }
 
+ // @Override
+  //public void teleopPeriodic() {
+   // m_myRobot.tankDrive(-m_leftStick.getY(), -m_leftStick.getY());
+    //m_myRobot.tankDrive(-m_leftStick.getTwist(), m_leftStick.getTwist());
+  //}
   @Override
-  public void teleopPeriodic() {
-    m_myRobot.tankDrive(-m_leftStick.getY(), -m_leftStick.getY());
-    m_myRobot.tankDrive(-m_leftStick.getTwist(), m_leftStick.getTwist());
-  }
+
+    public void teleopPeriodic() {
+
+        double forwardSpeed;
+
+        double rotationSpeed;
+
+
+        forwardSpeed = -m_leftStick.getX();
+
+
+        if (m_leftStick.getTriggerPressed()) {
+
+            // Vision-alignment mode
+
+            // Query the latest result from PhotonVision
+
+            var result = camera.getLatestResult();
+
+
+            if (result.hasTargets()) {
+
+                // Calculate angular turn power
+
+                // -1.0 required to ensure positive PID controller effort _increases_ yaw
+
+                rotationSpeed = -turnController.calculate(result.getBestTarget().getYaw(), 0);
+
+            } else {
+
+                // If we have no targets, stay still.
+
+                rotationSpeed = 0;
+
+            }
+
+        } else {
+
+            // Manual Driver Mode
+
+            rotationSpeed = m_leftStick.getY();
+
+        }
+
+
+        // Use our forward/turn speeds to control the drivetrain
+
+        m_myRobot.arcadeDrive(forwardSpeed, rotationSpeed);
+
+    }
+
 }
+
 //:3
