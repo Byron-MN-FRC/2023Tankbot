@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
 
             // Manual Driver Mode
 
-            rotationSpeed = m_leftStick.getY();
+            rotationSpeed = m_leftStick.getX();
 
         }
 
