@@ -71,7 +71,7 @@ public class Robot extends TimedRobot {
         double rotationSpeed;
 
 
-        forwardSpeed = -m_leftStick.getX();
+        forwardSpeed = -m_leftStick.getY();
 
 
         if (m_leftStick.getTriggerPressed()) {
