@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import org.photonvision.PhotonCamera; 
@@ -20,7 +21,7 @@ import org.photonvision.PhotonCamera;
  */
 public class Robot extends TimedRobot {
   private DifferentialDrive m_myRobot;
-  private Joystick m_leftStick;
+  private XboxController m_controller;
 
   private final MotorController m_leftMotor = new WPI_TalonSRX(5);
   private final MotorController m_rightMotor = new WPI_TalonSRX(7);
@@ -54,7 +55,7 @@ public class Robot extends TimedRobot {
     m_rightMotor.setInverted(true);
 
     m_myRobot = new DifferentialDrive(m_leftMotor, m_rightMotor);
-    m_leftStick = new Joystick(0);
+    m_controller = new XboxController(0);
   }
 
  // @Override
@@ -71,10 +72,10 @@ public class Robot extends TimedRobot {
         double rotationSpeed;
 
 
-        forwardSpeed = -m_leftStick.getY();
+        forwardSpeed = -m_controller.getLeftY()*.5;
 
 
-        if (m_leftStick.getTriggerPressed()) {
+        if (m_controller.getAButtonPressed()) {
 
             // Vision-alignment mode
 
@@ -103,7 +104,7 @@ public class Robot extends TimedRobot {
 
             // Manual Driver Mode
 
-            rotationSpeed = m_leftStick.getX();
+            rotationSpeed = m_controller.getLeftX()*.5;
 
         }
 
